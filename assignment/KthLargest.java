@@ -44,5 +44,4 @@ public class KthLargest {
 		int[] numbers = { 7, 4, 7, 4, 9, 1, 4, 1, 9, 10 };
 		System.out.println(find(numbers, k));
 	}
-
 }

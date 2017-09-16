@@ -1,7 +1,6 @@
 package assignment;
 
 import java.util.*;
-import util.*;
 
 public class KthLargest_PriorityQueue {
 
@@ -21,18 +20,7 @@ public class KthLargest_PriorityQueue {
 				queue.add(nums[i]);
 			}
 		}
-
 		return queue.peek();
 
 	}
-
-	public static void main(String[] args) {
-		int k = 3;
-		int[] numbers = DataBuilder.getNumbersInRange(10);
-
-		System.out.println(Arrays.toString(numbers));
-		System.out.println(find(numbers, k));
-	}
-
 }
-// T: O(log(n)); S:O(n)
