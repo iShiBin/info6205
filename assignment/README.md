@@ -1,1 +1,4 @@
-# Please check the markdown file (.md)  in each folder for the accomplishment of the homework.
+### root folder for all the assignments.
+
+### markdown file (.md): the accomplishment detail of the homework in a good format
+### source code file (.java): the java source code file
