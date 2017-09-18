@@ -7,5 +7,17 @@ public class Node {
 	Node() {
 	};
 
-	Node(int val) { value = val; }
+	Node(int val) {
+		value = val;
+		next = null;
+	}
+	
+	Node(Node node){
+		this.value = node.value;
+		this.next = node.next;
+	}
+	
+	public String toString(){
+		return Integer.toString(value);
+	}
 }
