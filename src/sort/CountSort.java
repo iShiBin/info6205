@@ -1,3 +1,4 @@
+package sort;
 //todo
 //works on very spark less numbers, big range
 public class CountSort {
