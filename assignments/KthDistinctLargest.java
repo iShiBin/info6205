@@ -1,6 +1,6 @@
-package assignment;
+package assignments;
 
-import java.util.PriorityQueue;
+import java.util.*;
 
 public class KthDistinctLargest {
 	public static int find(int[] nums, int k) {
