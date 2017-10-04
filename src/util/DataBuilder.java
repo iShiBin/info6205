@@ -35,10 +35,15 @@ public class DataBuilder {
   }
 
   public static void main(String[] args) {
-    int[] data = DataBuilder.getNumbersInRange(50, 100);
+    int n=3000, range=n*7;
+    int[] data = DataBuilder.getNumbersInRange(n, range);
+    
+    int[] reverse=DataBuilder.getNumbersInRange(n/3);
+    for(int i:reverse){
+        data[i]=-data[i];
+    }
+    
     System.out.println(Arrays.toString(data));
-
-    data = DataBuilder.getNumbersInRange(300, 1000);
-    System.out.println(Arrays.toString(data));
+//    System.out.println(data.length);
   }
 }
