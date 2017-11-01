@@ -1,4 +1,4 @@
-package assignment;
+
 
 //Assignment: Find the 3rd largest number in an unsorted array.
 

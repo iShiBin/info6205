@@ -1,8 +1,25 @@
-package assignment;
+
 
 import java.util.*;
 
-import tree.*;
+class TreeNode {
+  public int val;
+  public TreeNode left;
+  public TreeNode right;
+
+  TreeNode() {
+  }
+  
+  public TreeNode(int x) {
+    val = x;
+  }
+  
+  
+  
+  public String toString(){
+    return String.valueOf(val);
+  }
+}
 
 class BinaryTree {
   
