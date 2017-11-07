@@ -1,6 +1,6 @@
 
 
-public class BinarySearch {
+class BinarySearch {
   
   public static boolean run(int[] nums, int target){
 //    assert nums is a sorted integer array
