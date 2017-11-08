@@ -49,14 +49,14 @@ public class BinaryTreeUnitTest {
     root.right.right=new TreeNode(5);
     
 //    System.out.println(root.toDeepString());
-    TreeNode expected=BinaryTree.build(root.toDeepString());
+    TreeNode expected=BinaryTree.buildTree(root.toDeepString());
 //    BinaryTree.print(expected);
     Assert.assertTrue(root.equals(expected));
   }
   
   @Test
   public void traversePreorderTest(){
-    TreeNode root=BinaryTree.build("[40,20,60,null,30,50]");
+    TreeNode root=BinaryTree.buildTree("[40,20,60,null,30,50]");
     List<TreeNode> preorder=BinaryTree.traversePreorder(root);
     String expected="[40, 20, 30, 60, 50]";
     Assert.assertEquals(expected, preorder.toString());
@@ -64,7 +64,7 @@ public class BinaryTreeUnitTest {
   
   @Test
   public void traversePreorderIterativlyTest(){
-    TreeNode root=BinaryTree.build("[40,20,60,null,30,50]");
+    TreeNode root=BinaryTree.buildTree("[40,20,60,null,30,50]");
     List<TreeNode> preorder=BinaryTree.traversePreorderIterativly(root);
     String expected="[40, 20, 30, 60, 50]";
     Assert.assertEquals(expected, preorder.toString());
@@ -73,7 +73,7 @@ public class BinaryTreeUnitTest {
   @Test
   public void getAllLevelsTest(){
     TreeNode root=this.buildTestTree();
-    List<List<TreeNode>> list=BinaryTree.getRealLevels(root);
+    List<List<TreeNode>> list=BinaryTree.getLevelsReal(root);
     for(List<TreeNode> l:list){
       System.out.println(l);
     }
@@ -123,10 +123,10 @@ public class BinaryTreeUnitTest {
     
     System.out.println(root.toDeepString());
     System.out.println("left boundary");
-    System.out.println(BinaryTree.getLeftBoundary(root));
+    System.out.println(BinaryTree.getBoundaryLeft(root));
     
     System.out.println("right boundary");
-    System.out.println(BinaryTree.getRightBoundary(root));
+    System.out.println(BinaryTree.getBoundaryRight(root));
     
     System.out.println("leaves");
     System.out.println(BinaryTree.getLeaves(root));
@@ -162,7 +162,7 @@ public class BinaryTreeUnitTest {
   
   @Test
   public void getPathsTest(){
-    TreeNode root=BinaryTree.build("[1,2,3,4,5,5,null,23,8,10]");
+    TreeNode root=BinaryTree.buildTree("[1,2,3,4,5,5,null,23,8,10]");
     List<LinkedList<TreeNode>> list = BinaryTree.getPaths(root);
     BinaryTree.print(root);
     System.out.println("getPathsTest");
@@ -175,8 +175,8 @@ public class BinaryTreeUnitTest {
   }
   @Test
   public void getVerticalSumTest(){
-    TreeNode root=BinaryTree.build("[1,2,3,6,7,4,5]");
-    int[] sum=BinaryTree.getVerticalSum(root);
+    TreeNode root=BinaryTree.buildTree("[1,2,3,6,7,4,5]");
+    int[] sum=BinaryTree.sumVertical(root);
     System.out.println("The sum is: " + Arrays.toString(sum));
     int[] expected={6,2,12,3,5};
     Assert.assertArrayEquals(expected, sum);
@@ -282,6 +282,16 @@ public class BinaryTreeUnitTest {
    System.out.println("Sum:"+BinaryTree.sumOfLeaves(root));
     
     
+  }
+  
+  
+  @Test
+  public void maxSumFromRootToLeaf(){
+    TreeNode root = this.buildTestTree();
+    root.left.right=new TreeNode(10);
+    System.out.println("max sum");
+    System.out.println(BinaryTree.maxSumRootToLeaf(root));
+    this.printSeperateLine();
   }
   /******************************************************/
   

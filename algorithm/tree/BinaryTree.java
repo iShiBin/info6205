@@ -1,9 +1,14 @@
+/**
+ * Implement a binary tree.
+ * @author Bin.S
+ * @date 2017-11-08
+ * 
+ */
 package tree;
-
 import java.util.*;
 
 public class BinaryTree extends TreeNode {
-  
+  //todo: use another way root to represent the whole tree.
   private BinaryTree(){};
   
   /**
@@ -11,7 +16,7 @@ public class BinaryTree extends TreeNode {
    * @param input: a tree like [3, 1, 8, null,10, null, null]
    * <quote> https://leetcode.com/playground/new/binary-tree
    */
-  public static TreeNode build(String input) {
+  public static TreeNode buildTree(String input) {
     input = input.trim();
     input = input.substring(1, input.length() - 1);
     if (input.length() == 0) {
@@ -54,17 +59,30 @@ public class BinaryTree extends TreeNode {
     }
     return root;
   }
-
   
-  public static TreeNode buildMinBST(int[] array){
+  /**Generate a binary tree from an array
+   * @param array
+   * @return a balanced binary tree
+   */
+  public static TreeNode buildTree(int[] array){
     return buildMinBST(array,0,array.length-1);
+  }
+
+  /**Convert Sorted Array to Binary Search Tree 
+   * Given an array where elements are sorted in ascending order, convert it to a height balanced BST.
+   * <link>https://leetcode.com/problems/convert-sorted-array-to-binary-search-tree/description/
+   * @param sortedArray sorted in ascending order
+   * @return a height balanced BST.
+   */
+  public static TreeNode buildMinBST(int[] sortedArray){
+    return buildMinBST(sortedArray,0,sortedArray.length-1);
   }
   private static TreeNode buildMinBST(int[] array, int start, int end){
     if(start>end) return null;
     int mid=(start+end)/2;
-    TreeNode root=new TreeNode(array[mid]);
-    root.left=buildMinBST(array,start,mid-1);
-    root.right=buildMinBST(array,mid+1,end);
+    TreeNode root=new TreeNode(array[mid]); // build the root from the middle element
+    root.left=buildMinBST(array,start,mid-1); // recursively build a 'root' as the left of the root
+    root.right=buildMinBST(array,mid+1,end); // recursively build a 'root' as the right of the root
     return root;
   }
   
@@ -192,7 +210,7 @@ public class BinaryTree extends TreeNode {
   }
 
   /**
-   * This algorithm is very similar to Breadth first search of graph. Steps for
+   * This algorithm is very similar to breadth first search of graph. Steps for
    * Level order traversal algorithm:
    * 
    * Create empty queue and pust root node to it. Do the following when queue is
@@ -221,13 +239,13 @@ public class BinaryTree extends TreeNode {
    * @param root
    * @return
    */
-  private static LinkedList<List<TreeNode>> getAllLevels(TreeNode root){
+  private static LinkedList<List<TreeNode>> getLevelsAll(TreeNode root){
     LinkedList<List<TreeNode>> list=new LinkedList<>();
-    getAllLevels(root,0,list, true);
+    getLevelsAll(root,0,list, true);
     return list;
   }
   
-  private static void getAllLevels(TreeNode root, int level, List<List<TreeNode>> list, boolean includeNull){
+  private static void getLevelsAll(TreeNode root, int level, List<List<TreeNode>> list, boolean includeNull){
     
     if(!includeNull && root==null) return;
     
@@ -239,15 +257,15 @@ public class BinaryTree extends TreeNode {
       list.get(level).add(root);
     }
     
-    if(root!=null) getAllLevels(root.left,level+1,list,includeNull);
-    if(root!=null) getAllLevels(root.right,level+1,list,includeNull);
+    if(root!=null) getLevelsAll(root.left,level+1,list,includeNull);
+    if(root!=null) getLevelsAll(root.right,level+1,list,includeNull);
   }
   
   /**
    * Sometimes, we just don't want the last level if all its elements are null.
    */
-  public static List<List<TreeNode>> getRealLevels(TreeNode root){
-    LinkedList<List<TreeNode>> list=getAllLevels(root);
+  public static List<List<TreeNode>> getLevelsReal(TreeNode root){
+    LinkedList<List<TreeNode>> list=getLevelsAll(root);
     List<TreeNode> lastLevel=list.getLast();
     if(isAllNull(lastLevel)) list.removeLast();
     return list;
@@ -260,11 +278,11 @@ public class BinaryTree extends TreeNode {
   }
   
   /**
-   * Or we just don't need the null value in the levels
+   * Common used. Normally we just don't need the null value in the levels.
    */
   public static List<List<TreeNode>> getLevelsNoNull(TreeNode root){
     LinkedList<List<TreeNode>> list=new LinkedList<>();
-    getAllLevels(root,0,list, false);
+    getLevelsAll(root,0,list, false);
     return list;
   }
   
@@ -275,7 +293,7 @@ public class BinaryTree extends TreeNode {
    * @return
    */
   public static List<List<TreeNode>> traverseZipzap(TreeNode root){
-    List<List<TreeNode>> levelList = getRealLevels(root);
+    List<List<TreeNode>> levelList = getLevelsReal(root);
     for(int i=0;i<levelList.size();i++){
       if(i%2==1){
         Collections.reverse(levelList.get(i));
@@ -289,7 +307,7 @@ public class BinaryTree extends TreeNode {
     if (root.left == null && root.right == null) {
       return "[" + root.val + "]";
     } else {
-      List<List<TreeNode>> levels = getAllLevels(root);
+      List<List<TreeNode>> levels = getLevelsAll(root);
       List<TreeNode> list = new ArrayList<>();
       int start = 0, end = levels.size() - 1;
       if (isLastLevelNull(root))
@@ -322,7 +340,7 @@ public class BinaryTree extends TreeNode {
   }
   
   private static boolean isLastLevelNull(TreeNode root){
-    List<List<TreeNode>> list = getAllLevels(root);
+    List<List<TreeNode>> list = getLevelsAll(root);
     List<TreeNode> l=list.get(list.size()-1);
     for(TreeNode node: l){
       if(node!=null) return false;
@@ -438,9 +456,9 @@ public class BinaryTree extends TreeNode {
    * @param args
    */
   public static List<TreeNode> getBoundary(TreeNode root){
-    LinkedList<TreeNode> leftBoundary=getLeftBoundary(root);
+    LinkedList<TreeNode> leftBoundary=getBoundaryLeft(root);
     LinkedList<TreeNode> leaves=getLeaves(root);
-    LinkedList<TreeNode> rightBoundary=getRightBoundary(root);
+    LinkedList<TreeNode> rightBoundary=getBoundaryRight(root);
     
     List<TreeNode> list=leftBoundary;
     if(leaves!=null && leaves.getFirst()==leftBoundary.getLast()){
@@ -459,7 +477,7 @@ public class BinaryTree extends TreeNode {
     return list;
   }
   
-  public static LinkedList<TreeNode> getLeftBoundary(TreeNode root){
+  public static LinkedList<TreeNode> getBoundaryLeft(TreeNode root){
     LinkedList<TreeNode> list = new LinkedList<>();
     if (root != null) {
       list.add(root);
@@ -476,7 +494,7 @@ public class BinaryTree extends TreeNode {
     return list;
   }
   
-  public static LinkedList<TreeNode> getRightBoundary(TreeNode root) {
+  public static LinkedList<TreeNode> getBoundaryRight(TreeNode root) {
     LinkedList<TreeNode> list = new LinkedList<>();
     if (root != null) {
       list.add(root);
@@ -537,7 +555,7 @@ public class BinaryTree extends TreeNode {
   public static List<LinkedList<TreeNode>> getPaths(TreeNode root){
     List<LinkedList<TreeNode>> pathList=new LinkedList<>();
     if(root==null) return pathList;
-    getPaths(root, new LinkedList<>(), pathList);
+    getPaths(root, new LinkedList<>(), pathList);//todo: instead of create a new list, we need to remove the last element.
     return pathList;
   }
   
@@ -588,7 +606,7 @@ public class BinaryTree extends TreeNode {
     
   }
   
-  public static List<List<TreeNode>> getPathsBackTrack(TreeNode root){
+  public static List<List<TreeNode>> getPathsBacktrack(TreeNode root){
     return null;
   }
   
@@ -598,20 +616,20 @@ public class BinaryTree extends TreeNode {
    * @param root
    * @return
    */
-  public static int[] getVerticalSum(TreeNode root){
+  public static int[] sumVertical(TreeNode root){
     Map<Integer, Integer> map=new TreeMap<>();
-    gerVerticalSum(root, map, 0);
+    sumVertical(root, map, 0);
     return map.values().stream().mapToInt(v->v.intValue()).toArray();
   }
   
-  private static void gerVerticalSum(TreeNode root, Map<Integer, Integer> map, int position){
+  private static void sumVertical(TreeNode root, Map<Integer, Integer> map, int position){
     if(root==null) return;
     
     map.computeIfPresent(position, (k,v)->(v+root.val));
     map.putIfAbsent(position, root.val);
     
-    gerVerticalSum(root.left, map, position-1);
-    gerVerticalSum(root.right, map, position+1);
+    sumVertical(root.left, map, position-1);
+    sumVertical(root.right, map, position+1);
   }
   
   /**
@@ -710,13 +728,117 @@ public class BinaryTree extends TreeNode {
     return n+sumOfLeftLeaves(root.left)+sumOfLeftLeaves(root.right);
   }
   
-  public static int sumOfLeaves(TreeNode root){
-    if(root==null){
-        return 0;
-    }else if(root.left==null && root.right==null){
-        return root.val;
-    }else{
-        return sumOfLeaves(root.left)+sumOfLeaves(root.right);
+  public static int sumOfLeaves(TreeNode root) {
+    if (root == null) {
+      return 0;
+    } else if (root.left == null && root.right == null) {
+      return root.val;
+    } else {
+      return sumOfLeaves(root.left) + sumOfLeaves(root.right);
     }
+  }
+  
+  public static long maxSumRootToLeaf(TreeNode root){
+    if(root==null) return 0;
+    return Math.max(maxSumRootToLeaf(root.left), maxSumRootToLeaf(root.right)) + root.val;
+  }
+  
+  
+  
+  private List<TreeNode> list=new ArrayList<>();
+  
+  // print the top view from left->right
+  public void printTopView(TreeNode root) {
+    if(root==null) System.out.println("[]");
+    else{
+      Queue<TreeNode> queue=new LinkedList<>();
+      queue.offer(root);
+      while(!queue.isEmpty()){
+        TreeNode node=queue.poll();
+        if(node.left!=null) queue.offer(node.left);
+        if(node.right!=null) queue.offer(node.right);
+        list.add(node);
+      }
+
+      Map<Integer, TreeNode> map=new TreeMap<>();
+      getTopView(root, map, 0);
+      
+      List<Integer> topview=new ArrayList<Integer>();
+      for(TreeNode node:map.values()){
+        topview.add(node.val);
+      }
+      System.out.println(topview);
+    }
+  }
+  
+  private void getTopView(TreeNode root, Map<Integer, TreeNode> map, int horizon){
+    if(root==null) return;
+    if(!map.containsKey(horizon)){
+      map.put(horizon, root);
+    }else{
+      TreeNode node=map.get(horizon);
+      if(isBefore(root, node)){
+        map.replace(horizon, root);
+      }
+    }
+    getTopView(root.left,map,horizon-1);
+    getTopView(root.right,map,horizon+1);
+  }
+  
+  private boolean isBefore(TreeNode node1, TreeNode node2){
+    for(TreeNode node:list){
+      if(node==node1) return true;
+      if(node==node2) return false;
+    }
+    return true;
+  }
+  // print the top view in level order (root, left, right)
+  public void printTopViewLevel(TreeNode root) {
+    if(root==null) System.out.println("[]");
+    else{
+      Queue<TreeNode> queue=new LinkedList<>();
+      queue.offer(root);
+      while(!queue.isEmpty()){
+        TreeNode node=queue.poll();
+        if(node.left!=null) queue.offer(node.left);
+        if(node.right!=null) queue.offer(node.right);
+        list.add(node);
+      }
+
+      Map<Integer, TreeNode> map=new TreeMap<>();
+      getTopView(root, map, 0);
+      
+      List<Integer> topview=new ArrayList<>();
+      Collection<TreeNode> set=map.values();
+      for(TreeNode node:list){
+        if(set.contains(node)) topview.add(node.val);
+      }
+      System.out.println(topview);
+    }
+  }
+
+//   Driver class to test above methods usign the following example
+  /* Create following Binary Tree
+    1
+  /  \
+  2    3
+  \
+   4
+    \
+     5
+      \
+       6
+  */
+  
+  //todo
+  public TreeNode invertTree(TreeNode root) {
+    if(root==null) return root;
+    TreeNode left=invertTree(root.left);
+    TreeNode right=invertTree(root.right);
+    
+    root.left = right;
+    root.right= left;
+    
+    return root;
 }
 }
