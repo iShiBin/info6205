@@ -1,54 +1,93 @@
-import java.util.Arrays;
+package tree;
+/**
+ * class notes of 1026
+ */
+import java.util.*;
 
-class Minheap{
-  private int[] data;
-  private int heapSize;
+public class MinHeap{
+  private static final int INITIAL_SIZE=16;
+  private static final int RATE=2;
+  private int[] data=new int[INITIAL_SIZE]; // default;
+  private int heapSize=0;
   
-  Minheap(int size){
-    this.data=new int[size];
-    heapSize=0;
+  public MinHeap(){ }
+  
+  public MinHeap(int[] values){    
+    for(int i:values){
+      this.insert(i);
+    }
   }
   
-  int getMin(){
-    if(this.isEmpty()) throw new RuntimeException("Heap is empty") ;
+  public int getSize(){
     return heapSize;
   }
   
-  boolean isEmpty(){
+  public boolean isEmpty(){
     return this.heapSize==0;
   }
   
-  private int getLeftChild(int index){
-    return 2*index + 2;
+  /**
+   * tells whether the heap is a min heap
+   * @return true: if it is a min heap; otherwise, return false
+   */
+  public boolean isValid(){
+    return isValid(0);
   }
   
-  //todo
-  private int getRightChild(int index){
-    
-    return 0;
+  private boolean isValid(int index){
+    if(index<heapSize){
+      int left = getLeftChildIndex(index);
+      int right = getRightChildIndex(index);
+      
+      return (left >= heapSize || data[index]<=data[left]) && (right >= heapSize || data[index]<=data[right]) &&
+          isValid(left) && isValid(right);
+      
+    }
+    return true;
+  }
+  
+  /**
+   * @param index
+   * @return left child's index or -1 if no left child
+   */
+  private int getLeftChildIndex(int index){
+    return 2*index + 1;
+  }
+  
+  /**
+   * 
+   * @param index
+   * @return index of right child or -1 if it does not have one
+   */
+  private int getRightChildIndex(int index){
+    return 2*index + 2;
   }
   
   private int getParent(int index){
     return (index-1)/2;
   }
   
-  void insert(int value){
-    if(this.heapSize==data.length) throw new RuntimeException("heap is full");
+  public void insert(int value){
+    if(this.heapSize==data.length) {
+      data=Arrays.copyOf(data, RATE*data.length);
+      System.out.println("expaned since heap is full");
+    }
     
+    this.data[heapSize] = value;
+    siftUp(this.heapSize);
     this.heapSize++;
-    this.data[heapSize-1] = value;
-    siftUp(this.heapSize-1);
   }
   
   private void siftUp(int index){
-    int parentIndex, tmp;
-    
     if(index!=0){
-      parentIndex=getParent(index);
+      int parentIndex=getParent(index);
       if(this.data[parentIndex] > data[index]) {
+        
+        //swap
         this.data[parentIndex]= this.data[parentIndex] ^ data[index];
         data[index]=this.data[parentIndex] ^ data[index];
         this.data[parentIndex]= this.data[parentIndex] ^ data[index];
+        
         this.siftUp(parentIndex);
       }
     }
@@ -58,7 +97,7 @@ class Minheap{
     return Arrays.toString(this.data);
   }
   
-  void removeMin(){
+  public void removeMin(){
     if(this.isEmpty()) throw new RuntimeException("hey, you cannot remove an empty heap");
     
     this.data[0] = data[this.heapSize-1];
@@ -68,55 +107,26 @@ class Minheap{
     }
   }
   
-  
-  //todo
-  private void siftDown(int index){
-    int leftIndex=this.getLeftChild(index);
-    int rightIndex=this.getRightChild(index);
-    int minIndex;
-    
-    //understand
-    if(rightIndex>=heapSize){
-      if(leftIndex >= heapSize)
+  private void siftDown(int nodeIndex) {
+    int leftChildIndex, rightChildIndex, minIndex, tmp;
+    leftChildIndex = getLeftChildIndex(nodeIndex);
+    rightChildIndex = getRightChildIndex(nodeIndex);
+    if (rightChildIndex >= heapSize) {
+      if (leftChildIndex >= heapSize)
         return;
-      else minIndex=leftIndex;
-    }else{
-      minIndex=rightIndex;
+      else
+        minIndex = leftChildIndex;
+    } else {
+      if (data[leftChildIndex] <= data[rightChildIndex])
+        minIndex = leftChildIndex;
+      else
+        minIndex = rightChildIndex;
     }
-    
-    if(data[index] > data[minIndex]){
-      data[index] = data[index] ^ data[minIndex];
-      data[minIndex] = data[index] ^ data[minIndex];
-      data[index] = data[index] ^ data[minIndex];
+    if (data[nodeIndex] > data[minIndex]) {
+      tmp = data[minIndex];
+      data[minIndex] = data[nodeIndex];
+      data[nodeIndex] = tmp;
+      siftDown(minIndex);
     }
-    
-    //todo something here
   }
 }
-
-public class Class1026 {
-
-  public static void main(String[] args){
-    Minheap heap = new Minheap(20);
-    int[] values={6,3,5,1,9,8};
-    
-    for(int v:values){
-      heap.insert(v);
-    }
-    
-    System.out.println(heap);
-    
-    heap.insert(-2);
-    System.out.println(heap);
-    
-    heap.removeMin();
-    System.out.println(heap);
-    
-    //todo: write maxheap by myself
-    
-  }
-  //max/min heap
-  
-}
-
-// trie
