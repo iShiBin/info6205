@@ -1,7 +1,7 @@
 package tree;
 
 /**
- * Binary tree node and represent a binary tree itself for simplify coding. 
+ * Binary tree node 
  * @author bin
  *
  */
@@ -10,15 +10,13 @@ public class TreeNode {
   public TreeNode left;
   public TreeNode right;
 
-  TreeNode() {
+  protected TreeNode() {
   }
   
   public TreeNode(int x) {
     val = x;
   }
-  
-  
-  
+
   public String toString(){
     return String.valueOf(val);
   }

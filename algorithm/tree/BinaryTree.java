@@ -3,13 +3,13 @@
  * @author Bin.S
  * @date 2017-11-08
  * 
+ * @history
+ * 2017-11-08: persist on the static implementation
  */
 package tree;
 import java.util.*;
 
 public class BinaryTree extends TreeNode {
-  //todo: use another way root to represent the whole tree.
-  private BinaryTree(){};
   
   /**
    * Build a tree from an input string
@@ -65,27 +65,10 @@ public class BinaryTree extends TreeNode {
    * @return a balanced binary tree
    */
   public static TreeNode buildTree(int[] array){
-    return buildMinBST(array,0,array.length-1);
+    return BinarySearchTree.buildMinBST(array);
   }
 
-  /**Convert Sorted Array to Binary Search Tree 
-   * Given an array where elements are sorted in ascending order, convert it to a height balanced BST.
-   * <link>https://leetcode.com/problems/convert-sorted-array-to-binary-search-tree/description/
-   * @param sortedArray sorted in ascending order
-   * @return a height balanced BST.
-   */
-  public static TreeNode buildMinBST(int[] sortedArray){
-    return buildMinBST(sortedArray,0,sortedArray.length-1);
-  }
-  private static TreeNode buildMinBST(int[] array, int start, int end){
-    if(start>end) return null;
-    int mid=(start+end)/2;
-    TreeNode root=new TreeNode(array[mid]); // build the root from the middle element
-    root.left=buildMinBST(array,start,mid-1); // recursively build a 'root' as the left of the root
-    root.right=buildMinBST(array,mid+1,end); // recursively build a 'root' as the right of the root
-    return root;
-  }
-  
+
   /**
    * Traverse the binary tree in preorder and return the list of nodes.
    * Note: The null nodes are not included.
@@ -451,6 +434,48 @@ public class BinaryTree extends TreeNode {
   }
   
   /**
+   * A sibling is one of two or more individuals having one or both parents in common.
+   * A full sibling is a first-degree relative. A male sibling is a brother, and a female sibling is a sister.
+   * @param root
+   * @param node1
+   * @param node2
+   * @return
+   */
+  public static boolean areSiblings(TreeNode root, TreeNode node1, TreeNode node2) {
+    if (root == null)
+      return false;
+    return root.left == node1 && root.right == node2 || root.right == node1 && root.left == node2
+        || areSiblings(root.left, node1, node2) || areSiblings(root.right, node1, node2);
+  }
+  
+  /**
+   * Two nodes are cousins only if their parents are siblings.
+   * @param root
+   * @param node1
+   * @param node2
+   * @return
+   */
+  public static boolean areCousins(TreeNode root, TreeNode node1, TreeNode node2) {
+    return areSiblings(root, getParent(root, node1), getParent(root, node2));
+  }
+  
+  /**
+   * Find the parent of a node.
+   * @param root
+   * @param node
+   * @return node's parent or null
+   */
+  public static TreeNode getParent(TreeNode root, TreeNode node){
+    if(root==null || node==null) return null;
+    
+    if(root.left==node || root.right==node) return root;
+    else {
+      TreeNode parent = getParent(root.left, node);
+      return parent!=null?parent:getParent(root.right, node);
+    }
+  }
+  
+  /**
    * Boundary of Binary Tree
    * <link> https://leetcode.com/problems/boundary-of-binary-tree/description/
    * @param args
@@ -546,41 +571,15 @@ public class BinaryTree extends TreeNode {
     */
   }
   
-  /** todo: something is wrong here.
-   * Binary Tree Paths
-   * <link> https://leetcode.com/problems/binary-tree-paths/description/
-   * @param root
-   * @return all root-to-leaf paths in a linked list.
-   */
-  public static List<LinkedList<TreeNode>> getPaths(TreeNode root){
-    List<LinkedList<TreeNode>> pathList=new LinkedList<>();
-    if(root==null) return pathList;
-    getPaths(root, new LinkedList<>(), pathList);//todo: instead of create a new list, we need to remove the last element.
-    return pathList;
-  }
   
-  private static void getPaths(TreeNode root, LinkedList<TreeNode> path, List<LinkedList<TreeNode>> pathList){
-    path.add(root);
-    
-    if(root.left==null && root.right==null){
-      pathList.add(new LinkedList<TreeNode>(path));//need to create a new list and then add
-      return ;
-    }
-    
-    //create a new list for each sub-path.
-    if(root.left!=null) getPaths(root.left, new LinkedList<TreeNode>(path), pathList);
-    if(root.right!=null) getPaths(root.right, new LinkedList<TreeNode>(path), pathList);
-    
-  }
-  
-  /**
+  /** TOP-DOWN RECURSION
    * Another way to get the path of a tree, which just use one method.
    * The efficiency is however not high.
    * <link> https://leetcode.com/problems/path-sum-ii/description/
    * @param root
    * @return
    */
-  public static List<List<TreeNode>> getPaths2(TreeNode root){
+  public static List<List<TreeNode>> getRootToLeafPaths(TreeNode root){
     List<List<TreeNode>> list=new LinkedList<>();
     if(root==null) return list;
     else if(root.left==null && root.right==null){
@@ -588,8 +587,8 @@ public class BinaryTree extends TreeNode {
       l.add(root);
       list.add(l);
     } else {
-      List<List<TreeNode>> left= getPaths2(root.left);
-      List<List<TreeNode>> right= getPaths2(root.right);
+      List<List<TreeNode>> left= getRootToLeafPaths(root.left);
+      List<List<TreeNode>> right= getRootToLeafPaths(root.right);
       
       for(List<TreeNode> l: left){
         l.add(0, root);
@@ -601,13 +600,94 @@ public class BinaryTree extends TreeNode {
         list.add(l);
       }
     }
-    
     return list;
-    
   }
   
-  public static List<List<TreeNode>> getPathsBacktrack(TreeNode root){
-    return null;
+  /**
+   * Binary Tree Paths from the root to leaf.
+   * <link> https://leetcode.com/problems/binary-tree-paths/description/
+   * @param root
+   * @return all root-to-leaf paths in a linked list.
+   */
+  
+  public static List<LinkedList<TreeNode>> getPaths(TreeNode root){
+    List<LinkedList<TreeNode>> pathList=new LinkedList<>();
+    if(root==null) return pathList;
+    getToLeafPaths(root, new LinkedList<>(), pathList);
+    return pathList;
+  }
+  
+  /**
+   * Help function to backtrack and get the recursions.
+   * @param root
+   * @param path
+   * @param pathList
+   */
+  private static void getToLeafPaths(TreeNode root, LinkedList<TreeNode> path, List<LinkedList<TreeNode>> pathList) {
+    if (root == null)
+      return;
+
+    path.add(root);
+
+    if (root.left == null && root.right == null) {
+   // need to create a new list and then add
+      pathList.add(new LinkedList<TreeNode>(path));
+    }
+    getToLeafPaths(root.left, path, pathList);
+    getToLeafPaths(root.right, path, pathList);
+    path.removeLast();// remove the last node after one recursion!
+  }
+  
+  @Deprecated //Because of low efficiency to frequently 'new' objects 
+  private static void getPaths(TreeNode root, LinkedList<TreeNode> path, List<LinkedList<TreeNode>> pathList){
+    path.add(root);
+    
+    if(root.left==null && root.right==null){
+      pathList.add(new LinkedList<TreeNode>(path));//need to create a new list and then add
+      return ;
+    }
+    
+    //create a new list for each sub-path.
+    if(root.left!=null) getPaths(root.left, new LinkedList<TreeNode>(path), pathList); //low efficiency
+    if(root.right!=null) getPaths(root.right, new LinkedList<TreeNode>(path), pathList); //low efficiency
+  }
+
+  /**
+   * Get the path from the root to leaf which has the max sum.
+   * @param root
+   * @return
+   */
+  public static List<TreeNode> getMaxSumPath(TreeNode root){
+    List<TreeNode> max=new ArrayList<>(), temp=new ArrayList<>();
+    long[] sums=new long[2];
+    getMaxSumPath(root, max, temp, sums);
+    return max; 
+  }
+  
+  /**
+   * Recursion: Calculate the path with max sum value
+   * @param root: the root of the binary tree
+   * @param max: the path of max sum 
+   * @param temp: a temp list of the current recursion
+   * @param sums: sums[0] - the sum of temp list; sum[1] - the sum of max list
+   */
+  private static void getMaxSumPath(TreeNode root, List<TreeNode> max, List<TreeNode> temp, long[] sums){
+    if(root==null) return;
+    temp.add(root);
+    sums[0]+=root.val;
+    if(root.left==null && root.right==null) {
+      if(sums[0]>sums[1]) {
+        //cannot use `max = new ArrayList<Integer>(temp);` because it dereference max and list 
+        max.clear();
+        max.addAll(temp);
+        sums[1]=sums[0];
+      }
+    }
+    getMaxSumPath(root.left, max, temp, sums);
+    getMaxSumPath(root.right, max, temp, sums);
+    
+    sums[0]-=temp.get(temp.size()-1).val;
+    temp.remove(temp.size()-1);
   }
   
   /**
@@ -817,28 +897,28 @@ public class BinaryTree extends TreeNode {
     }
   }
 
-//   Driver class to test above methods usign the following example
-  /* Create following Binary Tree
-    1
-  /  \
-  2    3
-  \
-   4
-    \
-     5
-      \
-       6
-  */
-  
-  //todo
-  public TreeNode invertTree(TreeNode root) {
-    if(root==null) return root;
-    TreeNode left=invertTree(root.left);
-    TreeNode right=invertTree(root.right);
-    
+  public static TreeNode invertTree(TreeNode root) {
+    if (root == null)
+      return root;
+    TreeNode left = invertTree(root.left);
+    TreeNode right = invertTree(root.right);
+
     root.left = right;
-    root.right= left;
-    
+    root.right = left;
+
     return root;
-}
+  }
+  
+  /**
+   * Tell whether a tree is s sum tree, which root's value is the sum of all its children' values.
+   * @param root
+   * @return
+   */
+  public static boolean isSumTree(TreeNode root){
+    if(root==null || (root.left ==null && root.right==null)) return true;
+    
+    int sum= (root.left==null?0:root.left.val) + (root.right==null?0:root.right.val);
+    if(root.val==sum && isSumTree(root.left) && isSumTree(root.right)) return true;
+    else return false;
+  }
 }
