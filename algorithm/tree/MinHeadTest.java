@@ -25,8 +25,6 @@ public class MinHeadTest {
 
   @Test
   public void test() {
-    
-    
     MinHeap heap = null;
     
     for(int i=0;i<1000;i++){
