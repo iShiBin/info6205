@@ -27,7 +27,7 @@ However, the problem of this algorithm is the duplicating recalculation.
 
 For example, the F(0) was calculated 3 times and F(1) was 5 times. So in order to avoid the duplicated work, we can use two strategy **memoization** and **tabulation**, which are two different type of Dynamic Programming.
 
-#II. Memoization
+#II. Memorization
 
 Some people call this top-down recursion. This approach is to memorize the calculated value. Normally, we can use a hash map to cache the solution of subproblem like below.
 
