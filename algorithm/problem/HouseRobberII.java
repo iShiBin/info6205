@@ -1,5 +1,7 @@
 package problem;
 
+import java.util.Arrays;
+
 /**
  * House Robber II
  * <link>
@@ -39,5 +41,22 @@ public class HouseRobberII {
       dp[k] = Math.max(dp[k - 1], (k - i < 2 ? 0 : dp[k - 2]) + nums[k]);
     }
     return dp[j];
+  }
+  
+  /* Another way to solve the problem by using the HouseRobberI is to create two new arrays.
+   * One of which includes nums[0], and the other one does not include it. 
+   * 
+   * However, this used more space (2*n) so it is not recommended. 
+   * 
+   */
+  public int rob2(int[] nums) {
+    if (nums == null || nums.length == 0) return 0;
+    if(nums.length==1) return nums[0];
+    if(nums.length==2) return Math.max(nums[0], nums[1]);
+        
+    int[] include=Arrays.copyOf(nums, nums.length-1);
+    int[] exclude=Arrays.copyOfRange(nums, 1, nums.length);
+    HouseRobberI reuse=new HouseRobberI();
+    return Math.max(reuse.robDP(include), reuse.robDP(exclude));
   }
 }
